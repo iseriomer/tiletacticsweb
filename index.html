@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Tactics: 2048 Card Puzzle - Strategic Puzzle Chaos!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1f;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a0a2e 0%, #0f0519 50%, #16213e 100%);
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .tile {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .card {
+            width: 50px;
+            height: 70px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .mana {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-30px) rotate(5deg);
+            }
+            50% {
+                transform: translateY(-60px) rotate(-5deg);
+            }
+            75% {
+                transform: translateY(-30px) rotate(3deg);
+            }
+        }
+
+        /* Content Container */
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 31, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .logo-header {
+            height: 50px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 5%;
+            position: relative;
+        }
+
+        .hero-logo {
+            max-width: 400px;
+            width: 90%;
+            margin-bottom: 30px;
+            animation: logoGlow 3s infinite ease-in-out;
+            filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.6));
+        }
+
+        @keyframes logoGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.6));
+            }
+            50% {
+                filter: drop-shadow(0 0 50px rgba(102, 126, 234, 0.9));
+            }
+        }
+
+        h1 {
+            font-size: 3.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            font-weight: 900;
+            text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .tagline {
+            font-size: 1.5em;
+            color: #a0aec0;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            font-size: 1.1em;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 80px 5%;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            color: #a0aec0;
+            margin-bottom: 60px;
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(102, 126, 234, 0.8);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        /* Trailer Section */
+        .trailer-container {
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+            border: 3px solid rgba(102, 126, 234, 0.5);
+            position: relative;
+        }
+
+        .trailer-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            border-radius: 20px;
+            z-index: -1;
+            animation: borderGlow 3s infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .trailer-container iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            display: block;
+        }
+
+        /* Screenshots Section */
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .screenshot-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .screenshot-card:hover {
+            transform: scale(1.05) rotate(2deg);
+            border-color: rgba(102, 126, 234, 0.8);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.5);
+        }
+
+        .screenshot-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Download Section */
+        .download-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            text-align: center;
+            border-radius: 30px;
+            padding: 80px 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .download-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .download-section p {
+            font-size: 1.3em;
+            color: #a0aec0;
+            margin-bottom: 40px;
+        }
+
+        .store-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .store-btn {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 35px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .store-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(102, 126, 234, 0.8);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .store-icon {
+            font-size: 2em;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(10, 10, 31, 0.9);
+            padding: 50px 5%;
+            text-align: center;
+            border-top: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 2em;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #667eea;
+            transform: scale(1.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .tagline {
+                font-size: 1.2em;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .trailer-container iframe {
+                height: 300px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-container" id="bgContainer"></div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Header -->
+        <header>
+            <img src="logo.png" alt="Tile Tactics Logo" class="logo-header">
+            <nav class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#trailer">Trailer</a>
+                <a href="#screenshots">Screenshots</a>
+                <a href="#download">Download</a>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <img src="logo.png" alt="Tile Tactics: 2048 Card Puzzle" class="hero-logo">
+            <h1>Strategic Puzzle Chaos!</h1>
+            <p class="tagline">Merge tiles, play cards, master the chaos. Every move counts.</p>
+            <div class="cta-buttons">
+                <a href="#download" class="btn btn-primary">Download Now</a>
+                <a href="#trailer" class="btn btn-secondary">Watch Trailer</a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features">
+            <h2 class="section-title">What Makes It Addictive?</h2>
+            <p class="section-subtitle">Combine strategy, speed, and smart thinking in every round</p>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🎴</div>
+                    <h3>Card Powers</h3>
+                    <p>Unlock and use powerful cards to manipulate the board and create winning combos.</p>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.1s">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Mana System</h3>
+                    <p>Manage your mana wisely to unleash devastating card combinations at the perfect moment.</p>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.2s">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Limited Moves</h3>
+                    <p>Every swipe matters! Plan your strategy carefully with limited moves per round.</p>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.3s">
+                    <div class="feature-icon">🔥</div>
+                    <h3>Fast-Paced</h3>
+                    <p>Quick rounds, instant satisfaction. Perfect for both short breaks and long sessions.</p>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.4s">
+                    <div class="feature-icon">🧩</div>
+                    <h3>2048 Evolved</h3>
+                    <p>The classic merge mechanic you love, supercharged with strategic card gameplay.</p>
+                </div>
+                <div class="feature-card fade-in" style="animation-delay: 0.5s">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Endless Challenge</h3>
+                    <p>Push your limits, beat your high score, and master increasingly complex puzzles.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trailer Section -->
+        <section id="trailer">
+            <h2 class="section-title">See It In Action</h2>
+            <p class="section-subtitle">Watch how strategy meets chaos in this addictive puzzle game</p>
+            <div class="trailer-container fade-in">
+                <iframe src="https://www.youtube.com/embed/sdUEzP8cIRg" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <!-- Screenshots Section -->
+        <section id="screenshots">
+            <h2 class="section-title">Gameplay Showcase</h2>
+            <p class="section-subtitle">Every screenshot tells a story of strategic chaos</p>
+            <div class="screenshots-grid">
+                <div class="screenshot-card fade-in">
+                    <img src="ss (1).png" alt="Tile Tactics Screenshot 1">
+                </div>
+                <div class="screenshot-card fade-in" style="animation-delay: 0.1s">
+                    <img src="ss (2).png" alt="Tile Tactics Screenshot 2">
+                </div>
+                <div class="screenshot-card fade-in" style="animation-delay: 0.2s">
+                    <img src="ss (3).png" alt="Tile Tactics Screenshot 3">
+                </div>
+            </div>
+        </section>
+
+        <!-- Download Section -->
+        <section id="download">
+            <div class="download-section fade-in">
+                <h2>Ready to Master the Chaos?</h2>
+                <p>Join thousands of players experiencing strategic puzzle perfection</p>
+                <div class="store-buttons">
+                    <a href="#" class="store-btn">
+                        <span class="store-icon">📱</span>
+                        <div>
+                            <div style="font-size: 0.8em; opacity: 0.8;">Download on</div>
+                            <div>App Store</div>
+                        </div>
+                    </a>
+                    <a href="#" class="store-btn">
+                        <span class="store-icon">🤖</span>
+                        <div>
+                            <div style="font-size: 0.8em; opacity: 0.8;">Get it on</div>
+                            <div>Google Play</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="social-links">
+                <a href="#" title="Discord">💬</a>
+                <a href="#" title="Twitter">🐦</a>
+                <a href="#" title="Instagram">📷</a>
+                <a href="#" title="YouTube">📺</a>
+            </div>
+            <p style="color: #a0aec0;">© 2025 Tile Tactics: 2048 Card Puzzle. All rights reserved.</p>
+            <p style="color: #718096; margin-top: 10px; font-size: 0.9em;">Strategic Puzzle Chaos Awaits!</p>
+        </footer>
+    </div>
+
+    <script>
+        // Generate floating background elements
+        const bgContainer = document.getElementById('bgContainer');
+        const elements = [
+            { type: 'tile', count: 8, numbers: ['2', '4', '8', '16', '32', '64', '128', '256'] },
+            { type: 'card', count: 6 },
+            { type: 'mana', count: 10 }
+        ];
+
+        elements.forEach(element => {
+            for (let i = 0; i < element.count; i++) {
+                const el = document.createElement('div');
+                el.className = `floating-element ${element.type}`;
+                
+                if (element.type === 'tile') {
+                    el.textContent = element.numbers[i % element.numbers.length];
+                }
+                
+                el.style.left = Math.random() * 100 + '%';
+                el.style.top = Math.random() * 100 + '%';
+                el.style.animationDelay = Math.random() * 10 + 's';
+                el.style.animationDuration = (15 + Math.random() * 10) + 's';
+                
+                bgContainer.appendChild(el);
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+
+        // Parallax effect for floating elements
+        document.addEventListener('mousemove', (e) => {
+            const elements = document.querySelectorAll('.floating-element');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            elements.forEach((el, index) => {
+                const speed = (index % 3 + 1) * 10;
+                const x = (mouseX - 0.5) * speed;
+                const y = (mouseY - 0.5) * speed;
+                el.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
