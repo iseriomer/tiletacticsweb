@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tile Tactics: 2048 Card Puzzle - Strategic Puzzle Chaos!</title>
+    <title>Tile Tactics: 2048 Card Puzzle - Merge, Play, Win! 🎮</title>
     <style>
         * {
             margin: 0;
@@ -13,12 +13,12 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0a1f;
-            color: #fff;
+            background: #fff;
+            color: #2d3748;
             overflow-x: hidden;
         }
 
-        /* Animated Background */
+        /* Animated Cheerful Background */
         .bg-container {
             position: fixed;
             top: 0;
@@ -27,57 +27,97 @@
             height: 100%;
             z-index: 0;
             overflow: hidden;
-            background: linear-gradient(135deg, #1a0a2e 0%, #0f0519 50%, #16213e 100%);
+            background: linear-gradient(135deg, #fff9e6 0%, #ffe6f0 25%, #e6f7ff 50%, #f0e6ff 75%, #fffae6 100%);
+            background-size: 400% 400%;
+            animation: gradientFlow 20s ease infinite;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall 10s linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
 
         .floating-element {
             position: absolute;
-            opacity: 0.15;
-            animation: float 20s infinite ease-in-out;
+            animation: float 15s infinite ease-in-out;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1));
         }
 
         .tile {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(145deg, #ff6b6b 0%, #feca57 100%);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 20px;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            font-weight: 900;
+            font-size: 24px;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+            color: white;
+            border: 4px solid white;
         }
 
         .card {
-            width: 50px;
-            height: 70px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 6px;
-            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            width: 55px;
+            height: 80px;
+            background: linear-gradient(145deg, #48dbfb 0%, #0abde3 100%);
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(72, 219, 251, 0.4);
+            border: 4px solid white;
+            position: relative;
+        }
+
+        .card::before {
+            content: '🎴';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 28px;
         }
 
         .mana {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(145deg, #ff9ff3 0%, #feca57 100%);
             border-radius: 50%;
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
+            box-shadow: 0 0 25px rgba(255, 159, 243, 0.7);
+            border: 4px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .mana::before {
+            content: '⚡';
         }
 
         @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            25% {
-                transform: translateY(-30px) rotate(5deg);
-            }
-            50% {
-                transform: translateY(-60px) rotate(-5deg);
-            }
-            75% {
-                transform: translateY(-30px) rotate(3deg);
-            }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-40px) rotate(8deg); }
+            50% { transform: translateY(-80px) rotate(-8deg); }
+            75% { transform: translateY(-40px) rotate(5deg); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
         /* Content Container */
@@ -92,223 +132,369 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(10, 10, 31, 0.8);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+            border-bottom: 4px solid;
+            border-image: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3) 1;
+            box-shadow: 0 6px 25px rgba(254, 202, 87, 0.3);
         }
 
         .logo-header {
-            height: 50px;
+            height: 55px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+            transition: transform 0.3s;
+        }
+
+        .logo-header:hover {
+            transform: scale(1.1) rotate(5deg);
         }
 
         .nav-links {
             display: flex;
-            gap: 30px;
+            gap: 35px;
         }
 
         .nav-links a {
-            color: #fff;
+            color: #2d3748;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 800;
             transition: all 0.3s;
             position: relative;
+            font-size: 1.1em;
+            padding: 8px 16px;
+            border-radius: 25px;
         }
 
         .nav-links a:hover {
-            color: #667eea;
-            transform: translateY(-2px);
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            transform: translateY(-3px);
         }
 
         /* Hero Section */
         .hero {
-            min-height: 90vh;
+            min-height: 95vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 60px 5%;
+            padding: 80px 5%;
             position: relative;
         }
 
         .hero-logo {
-            max-width: 400px;
+            max-width: 450px;
             width: 90%;
-            margin-bottom: 30px;
-            animation: logoGlow 3s infinite ease-in-out;
-            filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.6));
+            margin-bottom: 40px;
+            animation: logoFloat 4s infinite ease-in-out;
+            filter: drop-shadow(0 15px 40px rgba(255, 107, 107, 0.3));
         }
 
-        @keyframes logoGlow {
-            0%, 100% {
-                filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.6));
-            }
-            50% {
-                filter: drop-shadow(0 0 50px rgba(102, 126, 234, 0.9));
-            }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
 
         h1 {
-            font-size: 3.5em;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            font-size: 4em;
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 25%, #48dbfb 50%, #ff9ff3 75%, #ff6b6b 100%);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-weight: 900;
-            text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+            animation: rainbowShift 5s linear infinite;
+            text-shadow: 0 0 40px rgba(255, 107, 107, 0.2);
+        }
+
+        @keyframes rainbowShift {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
         }
 
         .tagline {
-            font-size: 1.5em;
-            color: #a0aec0;
-            margin-bottom: 40px;
-            font-weight: 300;
+            font-size: 1.8em;
+            color: #4a5568;
+            margin-bottom: 45px;
+            font-weight: 600;
+            max-width: 700px;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 45px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-badge {
+            background: white;
+            padding: 20px 35px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid #feca57;
+            transition: all 0.3s;
+        }
+
+        .stat-badge:hover {
+            transform: translateY(-8px) rotate(3deg);
+            box-shadow: 0 15px 40px rgba(254, 202, 87, 0.4);
+        }
+
+        .stat-badge strong {
+            font-size: 2em;
+            color: #ff6b6b;
+            display: block;
+            font-weight: 900;
+        }
+
+        .stat-badge span {
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.95em;
         }
 
         .cta-buttons {
             display: flex;
-            gap: 20px;
+            gap: 25px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         .btn {
-            padding: 18px 40px;
-            font-size: 1.1em;
-            font-weight: 700;
+            padding: 22px 50px;
+            font-size: 1.3em;
+            font-weight: 800;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.4s;
             text-decoration: none;
             display: inline-block;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 400px;
+            height: 400px;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+            border: 4px solid white;
         }
 
         .btn-primary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(255, 107, 107, 0.5);
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: #fff;
-            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+            background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
+            color: white;
+            border: 4px solid white;
         }
 
         .btn-secondary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(72, 219, 251, 0.5);
         }
 
         /* Section Styles */
         section {
-            padding: 80px 5%;
+            padding: 100px 5%;
             position: relative;
         }
 
         .section-title {
             text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            font-size: 3em;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 50%, #48dbfb 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            font-weight: 800;
+            font-weight: 900;
         }
 
         .section-subtitle {
             text-align: center;
-            font-size: 1.2em;
-            color: #a0aec0;
-            margin-bottom: 60px;
+            font-size: 1.4em;
+            color: #4a5568;
+            margin-bottom: 70px;
+            font-weight: 600;
         }
 
         /* Features Section */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .feature-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(102, 126, 234, 0.3);
-            border-radius: 20px;
-            padding: 40px 30px;
+            background: white;
+            border: 4px solid #feca57;
+            border-radius: 25px;
+            padding: 45px 35px;
             text-align: center;
-            transition: all 0.3s;
+            transition: all 0.4s;
             cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 107, 107, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(102, 126, 234, 0.8);
-            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+            transform: translateY(-15px) rotate(-2deg);
+            border-color: #ff6b6b;
+            box-shadow: 0 20px 50px rgba(255, 107, 107, 0.3);
         }
 
         .feature-icon {
-            font-size: 3em;
-            margin-bottom: 20px;
+            font-size: 4em;
+            margin-bottom: 25px;
+            animation: bounce 2s infinite;
         }
 
         .feature-card h3 {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            color: #667eea;
+            font-size: 1.7em;
+            margin-bottom: 18px;
+            color: #ff6b6b;
+            font-weight: 800;
+        }
+
+        .feature-card p {
+            color: #4a5568;
+            line-height: 1.7;
+            font-size: 1.05em;
+        }
+
+        /* Gameplay Mechanics Section */
+        .mechanics-section {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(254, 202, 87, 0.05) 100%);
+            border-radius: 40px;
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .mechanics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .mechanic-item {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 20px;
+            text-align: center;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .mechanic-item:hover {
+            border-color: #48dbfb;
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(72, 219, 251, 0.3);
+        }
+
+        .mechanic-emoji {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .mechanic-item h4 {
+            font-size: 1.4em;
+            color: #ff6b6b;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        .mechanic-item p {
+            color: #4a5568;
+            line-height: 1.6;
         }
 
         /* Trailer Section */
         .trailer-container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            border-radius: 20px;
+            border-radius: 30px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
-            border: 3px solid rgba(102, 126, 234, 0.5);
+            box-shadow: 0 25px 70px rgba(255, 107, 107, 0.3);
+            border: 6px solid white;
             position: relative;
+            background: white;
         }
 
         .trailer-container::before {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
-            border-radius: 20px;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 400% 400%;
+            border-radius: 30px;
             z-index: -1;
-            animation: borderGlow 3s infinite;
+            animation: borderRainbow 5s linear infinite;
         }
 
-        @keyframes borderGlow {
-            0%, 100% {
-                opacity: 0.5;
-            }
-            50% {
-                opacity: 1;
-            }
+        @keyframes borderRainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .trailer-container iframe {
             width: 100%;
-            height: 500px;
+            height: 550px;
             border: none;
             display: block;
         }
@@ -316,26 +502,45 @@
         /* Screenshots Section */
         .screenshots-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .screenshot-card {
             position: relative;
-            border-radius: 20px;
+            border-radius: 25px;
             overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s;
             cursor: pointer;
-            border: 3px solid transparent;
+            border: 5px solid white;
+            background: white;
+        }
+
+        .screenshot-card::after {
+            content: '🔍 Click to zoom';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(255, 107, 107, 0.95), transparent);
+            color: white;
+            padding: 20px;
+            font-weight: 700;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .screenshot-card:hover::after {
+            transform: translateY(0);
         }
 
         .screenshot-card:hover {
-            transform: scale(1.05) rotate(2deg);
-            border-color: rgba(102, 126, 234, 0.8);
-            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.5);
+            transform: scale(1.08) rotate(2deg);
+            box-shadow: 0 25px 70px rgba(255, 107, 107, 0.4);
+            border-color: #feca57;
         }
 
         .screenshot-card img {
@@ -344,85 +549,166 @@
             display: block;
         }
 
-        /* Download Section */
-        .download-section {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            text-align: center;
-            border-radius: 30px;
-            padding: 80px 40px;
-            max-width: 1000px;
-            margin: 0 auto;
-            border: 2px solid rgba(102, 126, 234, 0.3);
+        /* Themes Section */
+        .themes-section {
+            background: linear-gradient(135deg, rgba(72, 219, 251, 0.05) 0%, rgba(255, 159, 243, 0.05) 100%);
+            border-radius: 40px;
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 50px auto;
         }
 
-        .download-section h2 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-
-        .download-section p {
-            font-size: 1.3em;
-            color: #a0aec0;
-            margin-bottom: 40px;
-        }
-
-        .store-buttons {
+        .themes-container {
             display: flex;
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .theme-badge {
+            padding: 20px 35px;
+            background: white;
+            border-radius: 50px;
+            border: 3px solid #48dbfb;
+            font-weight: 800;
+            font-size: 1.2em;
+            color: #2d3748;
+            transition: all 0.3s;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .theme-badge:hover {
+            transform: translateY(-8px) scale(1.1);
+            background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
+            color: white;
+            box-shadow: 0 15px 35px rgba(72, 219, 251, 0.4);
+        }
+
+        /* Download Section */
+        .download-section {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 50%, #48dbfb 100%);
+            text-align: center;
+            border-radius: 40px;
+            padding: 100px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 25px 70px rgba(255, 107, 107, 0.4);
+            border: 6px solid white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: rotateGlow 10s linear infinite;
+        }
+
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .download-section h2 {
+            font-size: 3em;
+            margin-bottom: 25px;
+            color: white;
+            font-weight: 900;
+            position: relative;
+            z-index: 1;
+        }
+
+        .download-section p {
+            font-size: 1.5em;
+            color: white;
+            margin-bottom: 50px;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .store-buttons {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
         }
 
         .store-btn {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 15px 35px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
-            color: #fff;
+            gap: 18px;
+            padding: 22px 45px;
+            background: white;
+            border: 4px solid white;
+            border-radius: 20px;
+            color: #2d3748;
             text-decoration: none;
-            transition: all 0.3s;
-            font-weight: 600;
+            transition: all 0.4s;
+            font-weight: 800;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
         }
 
         .store-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(102, 126, 234, 0.8);
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-10px) scale(1.08);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
         }
 
         .store-icon {
-            font-size: 2em;
+            font-size: 2.5em;
         }
 
         /* Footer */
         footer {
-            background: rgba(10, 10, 31, 0.9);
-            padding: 50px 5%;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(254, 202, 87, 0.1) 100%);
+            padding: 70px 5%;
             text-align: center;
-            border-top: 2px solid rgba(102, 126, 234, 0.3);
+            border-top: 4px solid;
+            border-image: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3) 1;
         }
 
         .social-links {
             display: flex;
-            gap: 30px;
+            gap: 35px;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         .social-links a {
-            color: #fff;
-            font-size: 2em;
+            color: #2d3748;
+            font-size: 2.5em;
             transition: all 0.3s;
+            background: white;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 3px solid #feca57;
         }
 
         .social-links a:hover {
-            color: #667eea;
-            transform: scale(1.2);
+            transform: scale(1.2) rotate(10deg);
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
+        }
+
+        footer p {
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 1.1em;
         }
 
         /* Responsive */
@@ -432,26 +718,52 @@
             }
 
             .tagline {
-                font-size: 1.2em;
+                font-size: 1.3em;
+            }
+
+            .stats-row {
+                gap: 15px;
+            }
+
+            .stat-badge {
+                padding: 15px 25px;
             }
 
             .cta-buttons {
                 flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .btn {
+                width: 100%;
             }
 
             .trailer-container iframe {
-                height: 300px;
+                height: 350px;
             }
 
             .nav-links {
                 display: none;
+            }
+
+            .section-title {
+                font-size: 2.2em;
+            }
+
+            .section-subtitle {
+                font-size: 1.1em;
+            }
+
+            .download-section h2 {
+                font-size: 2.2em;
             }
         }
 
         /* Scroll Animations */
         .fade-in {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(40px);
             animation: fadeInUp 0.8s forwards;
         }
 
@@ -459,6 +771,45 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            animation: slideInLeft 0.8s forwards;
+        }
+
+        @keyframes slideInLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            animation: slideInRight 0.8s forwards;
+        }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.8);
+            animation: scaleIn 0.6s forwards;
+        }
+
+        @keyframes scaleIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
             }
         }
     </style>
@@ -473,84 +824,186 @@
         <header>
             <img src="logo.png" alt="Tile Tactics Logo" class="logo-header">
             <nav class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#trailer">Trailer</a>
-                <a href="#screenshots">Screenshots</a>
-                <a href="#download">Download</a>
+                <a href="#features">🎮 Features</a>
+                <a href="#mechanics">⚡ How to Play</a>
+                <a href="#trailer">📺 Trailer</a>
+                <a href="#screenshots">📸 Gallery</a>
+                <a href="#download">⬇️ Download</a>
             </nav>
         </header>
 
         <!-- Hero Section -->
         <section class="hero">
             <img src="logo.png" alt="Tile Tactics: 2048 Card Puzzle" class="hero-logo">
-            <h1>Strategic Puzzle Chaos!</h1>
-            <p class="tagline">Merge tiles, play cards, master the chaos. Every move counts.</p>
+            <h1>Merge, Play, Win! 🎉</h1>
+            <p class="tagline">The most fun puzzle game you'll play today! Combine 2048 with cards, strategy, and pure chaos!</p>
+            
+            <div class="stats-row">
+                <div class="stat-badge scale-in">
+                    <strong>27</strong>
+                    <span>Power Cards</span>
+                </div>
+                <div class="stat-badge scale-in" style="animation-delay: 0.1s">
+                    <strong>12</strong>
+                    <span>Epic Perks</span>
+                </div>
+                <div class="stat-badge scale-in" style="animation-delay: 0.2s">
+                    <strong>7</strong>
+                    <span>Visual Themes</span>
+                </div>
+            </div>
+
             <div class="cta-buttons">
-                <a href="#download" class="btn btn-primary">Download Now</a>
-                <a href="#trailer" class="btn btn-secondary">Watch Trailer</a>
+                <a href="#download" class="btn btn-primary">🎮 Play Now - FREE!</a>
+                <a href="#trailer" class="btn btn-secondary">📺 Watch Gameplay</a>
             </div>
         </section>
 
         <!-- Features Section -->
         <section id="features">
-            <h2 class="section-title">What Makes It Addictive?</h2>
-            <p class="section-subtitle">Combine strategy, speed, and smart thinking in every round</p>
+            <h2 class="section-title">Why You'll Love It! 💖</h2>
+            <p class="section-subtitle">Every game is a new adventure with endless fun and strategy</p>
             <div class="features-grid">
                 <div class="feature-card fade-in">
                     <div class="feature-icon">🎴</div>
-                    <h3>Card Powers</h3>
-                    <p>Unlock and use powerful cards to manipulate the board and create winning combos.</p>
+                    <h3>27 Power Cards</h3>
+                    <p>Unlock amazing cards that transform the board! Each card offers unique strategies to reach your goals faster.</p>
                 </div>
                 <div class="feature-card fade-in" style="animation-delay: 0.1s">
                     <div class="feature-icon">⚡</div>
-                    <h3>Mana System</h3>
-                    <p>Manage your mana wisely to unleash devastating card combinations at the perfect moment.</p>
+                    <h3>Mana Magic</h3>
+                    <p>Earn 1 mana per move (max 8)! Use it wisely to unleash game-changing card combos.</p>
                 </div>
                 <div class="feature-card fade-in" style="animation-delay: 0.2s">
                     <div class="feature-icon">🎯</div>
-                    <h3>Limited Moves</h3>
-                    <p>Every swipe matters! Plan your strategy carefully with limited moves per round.</p>
+                    <h3>Smart Strategy</h3>
+                    <p>Limited moves make every swipe count! Plan ahead and reach targets from 32 to infinity.</p>
                 </div>
                 <div class="feature-card fade-in" style="animation-delay: 0.3s">
-                    <div class="feature-icon">🔥</div>
-                    <h3>Fast-Paced</h3>
-                    <p>Quick rounds, instant satisfaction. Perfect for both short breaks and long sessions.</p>
+                    <div class="feature-icon">🚀</div>
+                    <h3>12 Game-Changing Perks</h3>
+                    <p>Double moves, extra mana, spawn more tiles! Customize your gameplay with powerful perks.</p>
                 </div>
                 <div class="feature-card fade-in" style="animation-delay: 0.4s">
-                    <div class="feature-icon">🧩</div>
-                    <h3>2048 Evolved</h3>
-                    <p>The classic merge mechanic you love, supercharged with strategic card gameplay.</p>
+                    <div class="feature-icon">✨</div>
+                    <h3>Multiplier Madness</h3>
+                    <p>Land on multiplier tiles and watch your numbers double instantly! Strategic positioning = BIG wins.</p>
                 </div>
                 <div class="feature-card fade-in" style="animation-delay: 0.5s">
-                    <div class="feature-icon">🏆</div>
-                    <h3>Endless Challenge</h3>
-                    <p>Push your limits, beat your high score, and master increasingly complex puzzles.</p>
+                    <div class="feature-icon">🎨</div>
+                    <h3>7 Amazing Themes</h3>
+                    <p>Animals, Fruits, Space, Sweet Monsters & more! Play your style with gorgeous visuals.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gameplay Mechanics Section -->
+        <section id="mechanics">
+            <div class="mechanics-section">
+                <h2 class="section-title">How to Dominate! 🏆</h2>
+                <p class="section-subtitle">Master these core mechanics and become a Tile Tactics champion</p>
+                <div class="mechanics-grid">
+                    <div class="mechanic-item slide-in-left">
+                        <span class="mechanic-emoji">🎯</span>
+                        <h4>Progressive Targets</h4>
+                        <p>Reach 32 → 64 → 128 → 256 and beyond! Each target unlocks bonus moves.</p>
+                    </div>
+                    <div class="mechanic-item slide-in-left" style="animation-delay: 0.1s">
+                        <span class="mechanic-emoji">🔢</span>
+                        <h4>Classic 2048 Merging</h4>
+                        <p>Swipe to merge matching tiles. 2+2=4, 4+4=8... Simple to learn, hard to master!</p>
+                    </div>
+                    <div class="mechanic-item slide-in-right" style="animation-delay: 0.2s">
+                        <span class="mechanic-emoji">⏱️</span>
+                        <h4>Limited Moves</h4>
+                        <p>Use moves wisely! Hit targets to earn more. Every decision matters.</p>
+                    </div>
+                    <div class="mechanic-item slide-in-right" style="animation-delay: 0.3s">
+                        <span class="mechanic-emoji">💎</span>
+                        <h4>Mana Economy</h4>
+                        <p>Each move = 1 mana. Max 8 mana. Spend it on powerful cards at the right moment!</p>
+                    </div>
+                    <div class="mechanic-item slide-in-left" style="animation-delay: 0.4s">
+                        <span class="mechanic-emoji">🎴</span>
+                        <h4>Strategic Cards</h4>
+                        <p>27 unique cards to unlock! Clear tiles, spawn numbers, rearrange the board & more.</p>
+                    </div>
+                    <div class="mechanic-item slide-in-right" style="animation-delay: 0.5s">
+                        <span class="mechanic-emoji">✖️</span>
+                        <h4>Multiplier Tiles</h4>
+                        <p>Special tiles double your value! Position tiles strategically for massive combos.</p>
+                    </div>
+                    <div class="mechanic-item slide-in-left" style="animation-delay: 0.6s">
+                        <span class="mechanic-emoji">⭐</span>
+                        <h4>Power Perks</h4>
+                        <p>Unlock 12 perks: +2 mana/move, double moves, more tiles & game-changing abilities!</p>
+                    </div>
+                    <div class="mechanic-item slide-in-right" style="animation-delay: 0.7s">
+                        <span class="mechanic-emoji">🎨</span>
+                        <h4>Themed Experience</h4>
+                        <p>Choose from 7 gorgeous themes: Animals, Fruits, Space, Sweet Monsters & more!</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Trailer Section -->
         <section id="trailer">
-            <h2 class="section-title">See It In Action</h2>
-            <p class="section-subtitle">Watch how strategy meets chaos in this addictive puzzle game</p>
+            <h2 class="section-title">See The Magic! ✨</h2>
+            <p class="section-subtitle">Watch how strategy, cards, and pure fun come together</p>
             <div class="trailer-container fade-in">
                 <iframe src="https://www.youtube.com/embed/sdUEzP8cIRg" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </section>
 
+        <!-- Themes Section -->
+        <section id="themes">
+            <div class="themes-section">
+                <h2 class="section-title">Pick Your Style! 🎨</h2>
+                <p class="section-subtitle">7 stunning visual themes to match your mood</p>
+                <div class="themes-container">
+                    <div class="theme-badge">🐶 Animals</div>
+                    <div class="theme-badge">🍎 Fruits</div>
+                    <div class="theme-badge">🦁 Animals 2</div>
+                    <div class="theme-badge">🚀 Space</div>
+                    <div class="theme-badge">👾 Sweet Monsters</div>
+                    <div class="theme-badge">🎲 Classic</div>
+                    <div class="theme-badge">🍭 Sugar</div>
+                </div>
+            </div>
+        </section>
+
         <!-- Screenshots Section -->
         <section id="screenshots">
-            <h2 class="section-title">Gameplay Showcase</h2>
-            <p class="section-subtitle">Every screenshot tells a story of strategic chaos</p>
+            <h2 class="section-title">Gameplay Gallery 📸</h2>
+            <p class="section-subtitle">Every screenshot shows the excitement and strategy!</p>
             <div class="screenshots-grid">
                 <div class="screenshot-card fade-in">
-                    <img src="ss (1).png" alt="Tile Tactics Screenshot 1">
+                    <img src="ss (1).png" alt="Tile Tactics Gameplay 1">
                 </div>
                 <div class="screenshot-card fade-in" style="animation-delay: 0.1s">
-                    <img src="ss (2).png" alt="Tile Tactics Screenshot 2">
+                    <img src="ss (2).png" alt="Tile Tactics Gameplay 2">
                 </div>
                 <div class="screenshot-card fade-in" style="animation-delay: 0.2s">
-                    <img src="ss (3).png" alt="Tile Tactics Screenshot 3">
+                    <img src="ss (3).png" alt="Tile Tactics Gameplay 3">
+                </div>
+                <div class="screenshot-card fade-in" style="animation-delay: 0.3s">
+                    <img src="ss (4).png" alt="Tile Tactics Gameplay 4">
+                </div>
+                <div class="screenshot-card fade-in" style="animation-delay: 0.4s">
+                    <img src="ss (5).png" alt="Tile Tactics Gameplay 5">
+                </div>
+                <div class="screenshot-card fade-in" style="animation-delay: 0.5s">
+                    <img src="ss (6).png" alt="Tile Tactics Gameplay 6">
+                </div>
+                <div class="screenshot-card fade-in" style="animation-delay: 0.6s">
+                    <img src="ss (7).png" alt="Tile Tactics Gameplay 7">
+                </div>
+                <div class="screenshot-card fade-in" style="animation-delay: 0.7s">
+                    <img src="ss (8).png" alt="Tile Tactics Gameplay 8">
+                </div>
+                <div class="screenshot-card fade-in" style="animation-delay: 0.8s">
+                    <img src="ss (9).png" alt="Tile Tactics Gameplay 9">
                 </div>
             </div>
         </section>
@@ -558,21 +1011,21 @@
         <!-- Download Section -->
         <section id="download">
             <div class="download-section fade-in">
-                <h2>Ready to Master the Chaos?</h2>
-                <p>Join thousands of players experiencing strategic puzzle perfection</p>
+                <h2>Ready for Strategic Fun? 🎮</h2>
+                <p>Join players worldwide mastering the perfect puzzle chaos!</p>
                 <div class="store-buttons">
                     <a href="#" class="store-btn">
-                        <span class="store-icon">📱</span>
-                        <div>
+                        <span class="store-icon">🍎</span>
+                        <div style="text-align: left;">
                             <div style="font-size: 0.8em; opacity: 0.8;">Download on</div>
-                            <div>App Store</div>
+                            <div style="font-size: 1.2em;">App Store</div>
                         </div>
                     </a>
                     <a href="#" class="store-btn">
                         <span class="store-icon">🤖</span>
-                        <div>
+                        <div style="text-align: left;">
                             <div style="font-size: 0.8em; opacity: 0.8;">Get it on</div>
-                            <div>Google Play</div>
+                            <div style="font-size: 1.2em;">Google Play</div>
                         </div>
                     </a>
                 </div>
@@ -587,18 +1040,33 @@
                 <a href="#" title="Instagram">📷</a>
                 <a href="#" title="YouTube">📺</a>
             </div>
-            <p style="color: #a0aec0;">© 2025 Tile Tactics: 2048 Card Puzzle. All rights reserved.</p>
-            <p style="color: #718096; margin-top: 10px; font-size: 0.9em;">Strategic Puzzle Chaos Awaits!</p>
+            <p style="font-size: 1.2em; margin-bottom: 15px;">© 2025 Tile Tactics: 2048 Card Puzzle</p>
+            <p style="font-size: 1em; color: #718096;">Where Strategy Meets Fun! 🎉</p>
         </footer>
     </div>
 
     <script>
-        // Generate floating background elements
+        // Generate cheerful floating background elements
         const bgContainer = document.getElementById('bgContainer');
+        
+        // Create confetti
+        const confettiColors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#1dd1a1'];
+        for (let i = 0; i < 30; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+            confetti.style.animationDelay = Math.random() * 10 + 's';
+            confetti.style.animationDuration = (8 + Math.random() * 7) + 's';
+            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            bgContainer.appendChild(confetti);
+        }
+
+        // Create floating game elements
         const elements = [
-            { type: 'tile', count: 8, numbers: ['2', '4', '8', '16', '32', '64', '128', '256'] },
-            { type: 'card', count: 6 },
-            { type: 'mana', count: 10 }
+            { type: 'tile', count: 10, numbers: ['2', '4', '8', '16', '32', '64', '128', '256', '512', '1024'] },
+            { type: 'card', count: 8 },
+            { type: 'mana', count: 12 }
         ];
 
         elements.forEach(element => {
@@ -612,8 +1080,8 @@
                 
                 el.style.left = Math.random() * 100 + '%';
                 el.style.top = Math.random() * 100 + '%';
-                el.style.animationDelay = Math.random() * 10 + 's';
-                el.style.animationDuration = (15 + Math.random() * 10) + 's';
+                el.style.animationDelay = Math.random() * 12 + 's';
+                el.style.animationDuration = (12 + Math.random() * 8) + 's';
                 
                 bgContainer.appendChild(el);
             }
@@ -630,10 +1098,10 @@
             });
         });
 
-        // Intersection Observer for fade-in animations
+        // Intersection Observer for animations
         const observerOptions = {
             threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+            rootMargin: '0px 0px -80px 0px'
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -644,23 +1112,80 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll('.fade-in').forEach(el => {
+        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in').forEach(el => {
             el.style.animationPlayState = 'paused';
             observer.observe(el);
         });
 
-        // Parallax effect for floating elements
+        // Interactive parallax effect
+        let mouseX = 0, mouseY = 0;
+        let currentX = 0, currentY = 0;
+
         document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX / window.innerWidth - 0.5;
+            mouseY = e.clientY / window.innerHeight - 0.5;
+        });
+
+        function animate() {
+            currentX += (mouseX - currentX) * 0.1;
+            currentY += (mouseY - currentY) * 0.1;
+
             const elements = document.querySelectorAll('.floating-element');
-            const mouseX = e.clientX / window.innerWidth;
-            const mouseY = e.clientY / window.innerHeight;
-            
             elements.forEach((el, index) => {
-                const speed = (index % 3 + 1) * 10;
-                const x = (mouseX - 0.5) * speed;
-                const y = (mouseY - 0.5) * speed;
+                const speed = (index % 4 + 1) * 15;
+                const x = currentX * speed;
+                const y = currentY * speed;
                 el.style.transform = `translate(${x}px, ${y}px)`;
             });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Add bounce to feature icons on hover
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                const icon = this.querySelector('.feature-icon');
+                icon.style.animation = 'bounce 0.6s ease';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                const icon = this.querySelector('.feature-icon');
+                setTimeout(() => {
+                    icon.style.animation = 'bounce 2s infinite';
+                }, 600);
+            });
+        });
+
+        // Stat counter animation
+        const animateValue = (element, start, end, duration) => {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        };
+
+        // Trigger stat animation when visible
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const strong = entry.target.querySelector('strong');
+                    const targetValue = parseInt(strong.textContent);
+                    animateValue(strong, 0, targetValue, 1500);
+                    statObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-badge').forEach(badge => {
+            statObserver.observe(badge);
         });
     </script>
 </body>
