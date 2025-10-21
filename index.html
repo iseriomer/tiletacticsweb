@@ -130,7 +130,7 @@
         header {
             padding: 20px 5%;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(15px);
@@ -140,17 +140,14 @@
             border-bottom: 4px solid;
             border-image: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3) 1;
             box-shadow: 0 6px 25px rgba(254, 202, 87, 0.3);
+            transition: transform 0.3s ease;
         }
 
-        .logo-header {
-            height: 55px;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-            transition: transform 0.3s;
+        header.hidden {
+            transform: translateY(-100%);
         }
 
-        .logo-header:hover {
-            transform: scale(1.1) rotate(5deg);
-        }
+        
 
         .nav-links {
             display: flex;
@@ -189,8 +186,8 @@
         .hero-logo {
             max-width: 450px;
             width: 90%;
-            margin-bottom: 40px;
-            animation: logoFloat 4s infinite ease-in-out;
+            margin-bottom: -459px;
+            margin-top: -330px;
             filter: drop-shadow(0 15px 40px rgba(255, 107, 107, 0.3));
         }
 
@@ -220,7 +217,7 @@
         .tagline {
             font-size: 1.8em;
             color: #4a5568;
-            margin-bottom: 45px;
+            margin-bottom: 20px;
             font-weight: 600;
             max-width: 700px;
         }
@@ -348,15 +345,22 @@
         }
 
         /* Features Section */
+        .features-container {
+            position: relative;
+            max-width: 100%;
+            overflow: hidden;
+            padding: 0 60px;
+        }
+
         .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            display: flex;
             gap: 35px;
-            max-width: 1400px;
-            margin: 0 auto;
+            transition: transform 0.5s ease;
+            will-change: transform;
         }
 
         .feature-card {
+            min-width: 280px;
             background: white;
             border: 4px solid #feca57;
             border-radius: 25px;
@@ -367,6 +371,39 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             position: relative;
             overflow: hidden;
+        }
+
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: 4px solid #ff6b6b;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .scroll-btn:hover {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            transform: translateY(-50%) scale(1.15);
+            box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
+        }
+
+        .scroll-btn.left {
+            left: 10px;
+        }
+
+        .scroll-btn.right {
+            right: 10px;
         }
 
         .feature-card::before {
@@ -500,15 +537,22 @@
         }
 
         /* Screenshots Section */
+        .screenshots-container {
+            position: relative;
+            max-width: 100%;
+            overflow: hidden;
+            padding: 0 80px;
+        }
+
         .screenshots-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            display: flex;
             gap: 35px;
-            max-width: 1400px;
-            margin: 0 auto;
+            transition: transform 0.5s ease;
+            will-change: transform;
         }
 
         .screenshot-card {
+            min-width: 350px;
             position: relative;
             border-radius: 25px;
             overflow: hidden;
@@ -519,26 +563,8 @@
             background: white;
         }
 
-        .screenshot-card::after {
-            content: '🔍 Click to zoom';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(255, 107, 107, 0.95), transparent);
-            color: white;
-            padding: 20px;
-            font-weight: 700;
-            transform: translateY(100%);
-            transition: transform 0.3s;
-        }
-
-        .screenshot-card:hover::after {
-            transform: translateY(0);
-        }
-
         .screenshot-card:hover {
-            transform: scale(1.08) rotate(2deg);
+            transform: scale(1.05);
             box-shadow: 0 25px 70px rgba(255, 107, 107, 0.4);
             border-color: #feca57;
         }
@@ -549,7 +575,54 @@
             display: block;
         }
 
-        /* Themes Section */
+        /* Modal for zoomed image */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 15px;
+            box-shadow: 0 20px 80px rgba(255, 107, 107, 0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 30px;
+            right: 50px;
+            font-size: 3em;
+            color: white;
+            cursor: pointer;
+            background: rgba(255, 107, 107, 0.8);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: #ff6b6b;
+            transform: rotate(90deg) scale(1.1);
+        }
+
         .themes-section {
             background: linear-gradient(135deg, rgba(72, 219, 251, 0.05) 0%, rgba(255, 159, 243, 0.05) 100%);
             border-radius: 40px;
@@ -559,17 +632,23 @@
         }
 
         .themes-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 50px;
+            align-items: center;
+            margin-top: 0px;
+        }
+
+        .themes-list {
             display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 50px;
+            flex-direction: column;
+            gap: 15px;
         }
 
         .theme-badge {
             padding: 20px 35px;
             background: white;
-            border-radius: 50px;
+            border-radius: 20px;
             border: 3px solid #48dbfb;
             font-weight: 800;
             font-size: 1.2em;
@@ -577,6 +656,7 @@
             transition: all 0.3s;
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            text-align: left;
         }
 
         .theme-badge:hover {
@@ -584,6 +664,34 @@
             background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
             color: white;
             box-shadow: 0 15px 35px rgba(72, 219, 251, 0.4);
+        }
+
+        .theme-badge.active {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+            border-color: #ff6b6b;
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        .theme-preview {
+            margin-top: 0px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s;
+        }
+
+        .theme-preview.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .theme-preview img {
+            max-width: 300px;
+            width: 100%;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border: 5px solid white;
         }
 
         /* Download Section */
@@ -758,6 +866,18 @@
             .download-section h2 {
                 font-size: 2.2em;
             }
+            .themes-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .themes-list {
+                order: 2;
+            }
+            
+            .theme-preview {
+                order: 1;
+            }
         }
 
         /* Scroll Animations */
@@ -822,7 +942,6 @@
     <div class="content">
         <!-- Header -->
         <header>
-            <img src="logo.png" alt="Tile Tactics Logo" class="logo-header">
             <nav class="nav-links">
                 <a href="#features">🎮 Features</a>
                 <a href="#mechanics">⚡ How to Play</a>
@@ -835,9 +954,12 @@
         <!-- Hero Section -->
         <section class="hero">
             <img src="logo.png" alt="Tile Tactics: 2048 Card Puzzle" class="hero-logo">
-            <h1>Merge, Play, Win! 🎉</h1>
+            <h1>Merge, Play, Win!</h1>
             <p class="tagline">The most fun puzzle game you'll play today! Combine 2048 with cards, strategy, and pure chaos!</p>
-            
+            <div class="cta-buttons">
+                <a href="#download" class="btn btn-primary">🎮 Play Now - FREE!</a>
+                <a href="#trailer" class="btn btn-secondary">📺 Watch Gameplay</a>
+            </div>
             <div class="stats-row">
                 <div class="stat-badge scale-in">
                     <strong>27</strong>
@@ -853,46 +975,46 @@
                 </div>
             </div>
 
-            <div class="cta-buttons">
-                <a href="#download" class="btn btn-primary">🎮 Play Now - FREE!</a>
-                <a href="#trailer" class="btn btn-secondary">📺 Watch Gameplay</a>
-            </div>
         </section>
 
         <!-- Features Section -->
         <section id="features">
             <h2 class="section-title">Why You'll Love It! 💖</h2>
             <p class="section-subtitle">Every game is a new adventure with endless fun and strategy</p>
-            <div class="features-grid">
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">🎴</div>
-                    <h3>27 Power Cards</h3>
-                    <p>Unlock amazing cards that transform the board! Each card offers unique strategies to reach your goals faster.</p>
-                </div>
-                <div class="feature-card fade-in" style="animation-delay: 0.1s">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Mana Magic</h3>
-                    <p>Earn 1 mana per move (max 8)! Use it wisely to unleash game-changing card combos.</p>
-                </div>
-                <div class="feature-card fade-in" style="animation-delay: 0.2s">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Smart Strategy</h3>
-                    <p>Limited moves make every swipe count! Plan ahead and reach targets from 32 to infinity.</p>
-                </div>
-                <div class="feature-card fade-in" style="animation-delay: 0.3s">
-                    <div class="feature-icon">🚀</div>
-                    <h3>12 Game-Changing Perks</h3>
-                    <p>Double moves, extra mana, spawn more tiles! Customize your gameplay with powerful perks.</p>
-                </div>
-                <div class="feature-card fade-in" style="animation-delay: 0.4s">
-                    <div class="feature-icon">✨</div>
-                    <h3>Multiplier Madness</h3>
-                    <p>Land on multiplier tiles and watch your numbers double instantly! Strategic positioning = BIG wins.</p>
-                </div>
-                <div class="feature-card fade-in" style="animation-delay: 0.5s">
-                    <div class="feature-icon">🎨</div>
-                    <h3>7 Amazing Themes</h3>
-                    <p>Animals, Fruits, Space, Sweet Monsters & more! Play your style with gorgeous visuals.</p>
+            <div class="features-container">
+                <div class="scroll-btn left" onclick="scrollFeatures('left')">←</div>
+                <div class="scroll-btn right" onclick="scrollFeatures('right')">→</div>
+                <div class="features-grid" id="featuresGrid">
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🎴</div>
+                        <h3>27 Power Cards</h3>
+                        <p>Unlock amazing cards that transform the board! Each card offers unique strategies to reach your goals faster.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Mana Magic</h3>
+                        <p>Earn 1 mana per move (max 8)! Use it wisely to unleash game-changing card combos.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Smart Strategy</h3>
+                        <p>Limited moves make every swipe count! Plan ahead and reach targets from 32 to infinity.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🚀</div>
+                        <h3>12 Game-Changing Perks</h3>
+                        <p>Double moves, extra mana, spawn more tiles! Customize your gameplay with powerful perks.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">✨</div>
+                        <h3>Multiplier Madness</h3>
+                        <p>Land on multiplier tiles and watch your numbers double instantly! Strategic positioning = BIG wins.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🎨</div>
+                        <h3>7 Amazing Themes</h3>
+                        <p>Animals, Fruits, Space, Sweet Monsters & more! Play your style with gorgeous visuals.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -959,54 +1081,69 @@
         <!-- Themes Section -->
         <section id="themes">
             <div class="themes-section">
-                <h2 class="section-title">Pick Your Style! 🎨</h2>
+                <h2 class="section-title">Pick Your Style!</h2>
                 <p class="section-subtitle">7 stunning visual themes to match your mood</p>
                 <div class="themes-container">
-                    <div class="theme-badge">🐶 Animals</div>
-                    <div class="theme-badge">🍎 Fruits</div>
-                    <div class="theme-badge">🦁 Animals 2</div>
-                    <div class="theme-badge">🚀 Space</div>
-                    <div class="theme-badge">👾 Sweet Monsters</div>
-                    <div class="theme-badge">🎲 Classic</div>
-                    <div class="theme-badge">🍭 Sugar</div>
+                    <div class="themes-list">
+                        <div class="theme-badge active" data-theme="Animal">🐶 Animals</div>
+                        <div class="theme-badge" data-theme="Fruits">🍎 Fruits</div>
+                        <div class="theme-badge" data-theme="Animal2">🦁 Animals 2</div>
+                        <div class="theme-badge" data-theme="Space">🚀 Space</div>
+                        <div class="theme-badge" data-theme="Sweet Monsters">👾 Cute Monsters</div>
+                        <div class="theme-badge" data-theme="Classic">🎲 Classic</div>
+                        <div class="theme-badge" data-theme="Sugar">🍭 Sugar</div>
+                    </div>
+                    <div class="theme-preview active" id="themePreview">
+                        <img src="Animal.png" alt="Animal Theme" id="themeImage">
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Screenshots Section -->
         <section id="screenshots">
-            <h2 class="section-title">Gameplay Gallery 📸</h2>
+            <h2 class="section-title">Gameplay Gallery</h2>
             <p class="section-subtitle">Every screenshot shows the excitement and strategy!</p>
-            <div class="screenshots-grid">
-                <div class="screenshot-card fade-in">
-                    <img src="ss (1).png" alt="Tile Tactics Gameplay 1">
-                </div>
-                <div class="screenshot-card fade-in" style="animation-delay: 0.1s">
-                    <img src="ss (2).png" alt="Tile Tactics Gameplay 2">
-                </div>
-                <div class="screenshot-card fade-in" style="animation-delay: 0.2s">
-                    <img src="ss (3).png" alt="Tile Tactics Gameplay 3">
-                </div>
-                <div class="screenshot-card fade-in" style="animation-delay: 0.3s">
-                    <img src="ss (4).png" alt="Tile Tactics Gameplay 4">
-                </div>
-                <div class="screenshot-card fade-in" style="animation-delay: 0.4s">
-                    <img src="ss (5).png" alt="Tile Tactics Gameplay 5">
-                </div>
-                <div class="screenshot-card fade-in" style="animation-delay: 0.5s">
-                    <img src="ss (6).png" alt="Tile Tactics Gameplay 6">
-                </div>
-                <div class="screenshot-card fade-in" style="animation-delay: 0.6s">
-                    <img src="ss (7).png" alt="Tile Tactics Gameplay 7">
-                </div>
-                <div class="screenshot-card fade-in" style="animation-delay: 0.7s">
-                    <img src="ss (8).png" alt="Tile Tactics Gameplay 8">
-                </div>
-                <div class="screenshot-card fade-in" style="animation-delay: 0.8s">
-                    <img src="ss (9).png" alt="Tile Tactics Gameplay 9">
+            <div class="screenshots-container">
+                <div class="scroll-btn left" onclick="scrollScreenshots('left')">←</div>
+                <div class="scroll-btn right" onclick="scrollScreenshots('right')">→</div>
+                <div class="screenshots-grid" id="screenshotsGrid">
+                    <div class="screenshot-card fade-in" onclick="openModal('ss (1).png')">
+                        <img src="ss (1).png" alt="Tile Tactics Gameplay 1">
+                    </div>
+                    <div class="screenshot-card fade-in" onclick="openModal('ss (2).png')">
+                        <img src="ss (2).png" alt="Tile Tactics Gameplay 2">
+                    </div>
+                    <div class="screenshot-card fade-in" onclick="openModal('ss (3).png')">
+                        <img src="ss (3).png" alt="Tile Tactics Gameplay 3">
+                    </div>
+                    <div class="screenshot-card fade-in" onclick="openModal('ss (4).png')">
+                        <img src="ss (4).png" alt="Tile Tactics Gameplay 4">
+                    </div>
+                    <div class="screenshot-card fade-in" onclick="openModal('ss (5).png')">
+                        <img src="ss (5).png" alt="Tile Tactics Gameplay 5">
+                    </div>
+                    <div class="screenshot-card fade-in" onclick="openModal('ss (6).png')">
+                        <img src="ss (6).png" alt="Tile Tactics Gameplay 6">
+                    </div>
+                    <div class="screenshot-card fade-in" onclick="openModal('ss (7).png')">
+                        <img src="ss (7).png" alt="Tile Tactics Gameplay 7">
+                    </div>
+                    <div class="screenshot-card fade-in" onclick="openModal('ss (8).png')">
+                        <img src="ss (8).png" alt="Tile Tactics Gameplay 8">
+                    </div>
+                    <div class="screenshot-card fade-in" onclick="openModal('ss (9).png')">
+                        <img src="ss (9).png" alt="Tile Tactics Gameplay 9">
+                    </div>
                 </div>
             </div>
         </section>
+
+        <!-- Modal for zoomed images -->
+        <div class="modal" id="imageModal" onclick="closeModal()">
+            <span class="modal-close">×</span>
+            <img src="" alt="Zoomed screenshot" id="modalImage">
+        </div>
 
         <!-- Download Section -->
         <section id="download">
@@ -1046,6 +1183,109 @@
     </div>
 
     <script>
+        let lastScrollTop = 0;
+        const header = document.querySelector('header');
+        const scrollThreshold = 100;
+
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > scrollThreshold) {
+                if (scrollTop > lastScrollTop) {
+                    header.classList.add('hidden');
+                } else {
+                    header.classList.remove('hidden');
+                }
+            } else {
+                header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+        // Theme selection
+        const themeBadges = document.querySelectorAll('.theme-badge');
+        const themePreview = document.getElementById('themePreview');
+        const themeImage = document.getElementById('themeImage');
+
+        themeBadges.forEach(badge => {
+            badge.addEventListener('click', function() {
+                // Remove active class from all badges
+                themeBadges.forEach(b => b.classList.remove('active'));
+                
+                // Add active class to clicked badge
+                this.classList.add('active');
+                
+                // Get theme name and update image
+                const themeName = this.getAttribute('data-theme');
+                themeImage.src = `${themeName}.png`;
+                themeImage.alt = `${themeName} Theme`;
+                
+                // Show preview with animation
+                themePreview.classList.remove('active');
+                setTimeout(() => {
+                    themePreview.classList.add('active');
+                }, 50);
+            });
+        });
+
+        // Features scrolling
+        let featuresScrollPosition = 0;
+        const featuresGrid = document.getElementById('featuresGrid');
+        const featureCards = document.querySelectorAll('.feature-card');
+        const cardWidth = 280 + 35; // card width + gap
+
+        function scrollFeatures(direction) {
+            const maxScroll = -(cardWidth * (featureCards.length - Math.floor(window.innerWidth / cardWidth)));
+            
+            if (direction === 'left') {
+                featuresScrollPosition = Math.min(featuresScrollPosition + cardWidth, 0);
+            } else {
+                featuresScrollPosition = Math.max(featuresScrollPosition - cardWidth, maxScroll);
+            }
+            
+            featuresGrid.style.transform = `translateX(${featuresScrollPosition}px)`;
+        }
+
+        // Screenshots scrolling
+        let screenshotsScrollPosition = 0;
+        const screenshotsGrid = document.getElementById('screenshotsGrid');
+        const screenshotCards = document.querySelectorAll('.screenshot-card');
+        const screenshotWidth = 350 + 35; // card width + gap
+
+        function scrollScreenshots(direction) {
+            const maxScroll = -(screenshotWidth * (screenshotCards.length - Math.floor(window.innerWidth / screenshotWidth)));
+            
+            if (direction === 'left') {
+                screenshotsScrollPosition = Math.min(screenshotsScrollPosition + screenshotWidth, 0);
+            } else {
+                screenshotsScrollPosition = Math.max(screenshotsScrollPosition - screenshotWidth, maxScroll);
+            }
+            
+            screenshotsGrid.style.transform = `translateX(${screenshotsScrollPosition}px)`;
+        }
+
+        // Modal functions
+        function openModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
         // Generate cheerful floating background elements
         const bgContainer = document.getElementById('bgContainer');
         
@@ -1064,9 +1304,7 @@
 
         // Create floating game elements
         const elements = [
-            { type: 'tile', count: 10, numbers: ['2', '4', '8', '16', '32', '64', '128', '256', '512', '1024'] },
-            { type: 'card', count: 8 },
-            { type: 'mana', count: 12 }
+            { type: 'tile', count: 20, numbers: ['2', '4', '8', '16', '32', '64', '128', '256', '512', '1024', '2048'] }
         ];
 
         elements.forEach(element => {
@@ -1088,7 +1326,7 @@
         });
 
         // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
