@@ -818,7 +818,83 @@
             font-weight: 600;
             font-size: 1.1em;
         }
+        /* Mobile menu button (top-left) */
+    .mobile-menu-btn {
+        display: none; /* shown on small screens via media query below */
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 120;
+        background: linear-gradient(135deg, #ff6b6b, #feca57);
+        color: white;
+        border: none;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        font-size: 1.4em;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        cursor: pointer;
+    }
 
+    /* Mobile full-screen nav overlay */
+    .mobile-nav {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 115;
+        background: rgba(0,0,0,0.5);
+        align-items: center;
+        justify-content: center;
+        transition: opacity 220ms ease;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .mobile-nav.open {
+        display: flex;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .mobile-nav-inner {
+        width: min(420px, 92%);
+        background: rgba(255,255,255,0.98);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 30px 70px rgba(0,0,0,0.35);
+        border: 6px solid white;
+        position: relative;
+    }
+
+    .mobile-nav-close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: transparent;
+        border: none;
+        font-size: 1.6em;
+        cursor: pointer;
+    }
+
+    .mobile-nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-top: 10px;
+    }
+
+    .mobile-nav-links a {
+        font-size: 1.2em;
+        padding: 14px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #2d3748;
+        font-weight: 800;
+        background: white;
+        border: 3px solid #feca57;
+        display: block;
+        text-align: center;
+    }
         /* Responsive */
         @media (max-width: 768px) {
             h1 {
@@ -942,6 +1018,24 @@
     <div class="content">
         <!-- Header -->
         <header>
+                        <!-- START: MOBILE MENU BUTTON + MOBILE NAV (PUT INSIDE <header> AT THE TOP) -->
+            <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Menu" aria-expanded="false">☰</button>
+
+            <!-- Mobile full-screen nav (hidden by default) -->
+            <div id="mobileNav" class="mobile-nav" aria-hidden="true">
+            <div class="mobile-nav-inner" role="menu" aria-label="Main navigation">
+                <button id="mobileNavClose" class="mobile-nav-close" aria-label="Close menu">×</button>
+                <nav class="mobile-nav-links">
+                <a href="#features">🎮 Features</a>
+                <a href="#mechanics">⚡ How to Play</a>
+                <a href="#trailer">📺 Trailer</a>
+                <a href="#screenshots">📸 Gallery</a>
+                <a href="#download">⬇️ Download</a>
+                </nav>
+            </div>
+            </div>
+            <!-- END: MOBILE MENU -->
+
             <nav class="nav-links">
                 <a href="#features">🎮 Features</a>
                 <a href="#mechanics">⚡ How to Play</a>
